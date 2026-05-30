@@ -1,8 +1,8 @@
+import Hero from "./components/hero/Hero";
+
 export default function Home() {
-  return (
-    <main className="flex items-center justify-center h-screen">
-      <h1 className="text-5xl font-bold">
-Home Page      </h1>
-    </main>
-  )
+
+  return <main className="Home flex flex-col items-center">
+    <Hero />
+  </main>
 }
