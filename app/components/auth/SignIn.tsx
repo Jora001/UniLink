@@ -1,13 +1,20 @@
+'use client';
+
 import Link from "next/link";
 import { useAuthModal } from "../../context/auth/AuthModalContext";
 import { FormEvent, useState } from "react";
 import { SignInData } from "../../types/auth";
 import useSignIn from "@/app/hooks/auth/useSignIn";
+import useGoogleAuth from "@/app/hooks/auth/useGoogleAuth";
+import { useRouter } from "next/navigation";
 
 
 export default function SignIn() {
     const { closeModal, openModal } = useAuthModal();
     const { signIn } = useSignIn();
+    const { googleAuth } = useGoogleAuth();
+    const router = useRouter();
+
 
     const [formData, setFormData] = useState<SignInData>(
         {
@@ -18,6 +25,7 @@ export default function SignIn() {
     const [passwordType, setPasswordType] = useState<"text" | "password">("password");
 
 
+    const handleSubmit = async (e: FormEvent) => {
     const handleSumbit = async (e: FormEvent) => {
         e.preventDefault();
 
@@ -28,12 +36,16 @@ export default function SignIn() {
             ])
         ) as SignInData;
 
+        if (!cleaned.email || !cleaned.password) return;
+
         if(!cleaned.email || !cleaned.password) return;
 
         const user = await signIn(cleaned);
 
         if (user) {
             closeModal();
+            router.push("/profile");
+
         }
     };
 
@@ -58,6 +70,7 @@ export default function SignIn() {
         <h2 className="font-semibold text-[32px] leading-[130%] text-center align-middle">Sign In</h2>
 
         <form
+            onSubmit={handleSubmit}
             onSubmit={handleSumbit}
             className="flex flex-col items-center gap-3.5"
         >
@@ -102,6 +115,17 @@ export default function SignIn() {
                 </svg>
             </div>
 
+            {/* Password reset */}
+            <div>
+                <span className="font-normal text-[14px] leading-[130%] align-middle" >Did you forget the password? </span>
+                <button
+                    type="button"
+                    onClick={() => { closeModal(), openModal("resetRequest") }}
+                    className="font-bold text-[14px] leading-[130%] align-middle text-[#0066ff] cursor-pointer "
+                > Reset </button>
+            </div>
+
+
             <button
                 type="submit"
                 className="w-full h-14 rounded-[10px] bg-linear-to-r from-[#1170FF] to-[#0A4399] font-['Arial'] font-black text-[18px] md:text-[20px] leading-5 text-center align-middle mt-7 cursor-pointer">
@@ -121,6 +145,9 @@ export default function SignIn() {
         </div>
 
         {/* Sing In With */}
+        <button
+            onClick={googleAuth}
+            className="w-80 md:w-100 lg:w-119 flex items-center gap-3.75 border rounded-[10px] py-5.5 px-7.5 cursor-pointer">
         <div className="w-80 md:w-100 lg:w-119 flex items-center gap-3.75 border rounded-[10px] py-5.5 px-7.5">
             <svg width="25" height="26" viewBox="0 0 25 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M24.543 12.8002C24.543 11.7707 24.4594 11.0194 24.2786 10.2402H12.522V14.8872H19.4229C19.2838 16.042 18.5325 17.7812 16.8629 18.9498L16.8395 19.1054L20.5567 21.9851L20.8142 22.0108C23.1794 19.8264 24.543 16.6124 24.543 12.8002Z" fill="#4285F4" />
@@ -129,6 +156,10 @@ export default function SignIn() {
                 <path d="M12.5222 4.84176C14.8735 4.84176 16.4596 5.85742 17.3639 6.70619L20.8979 3.25569C18.7275 1.23828 15.903 0 12.5222 0C7.62469 0 3.39507 2.81045 1.33594 6.9009L5.38466 10.0453C6.40042 7.02616 9.21086 4.84176 12.5222 4.84176Z" fill="#EB4335" />
             </svg>
             <span className="font-normal text-[15px] leading-[130%] align-middle">Continue with Google</span>
+        </button>
+
+        {/* Sign Up */}
+        <div>
         </div>
 
         {/* Sign Up */}

@@ -1,3 +1,6 @@
+import { UserDataResponse } from "../../auth";
+
+export type ModalType = "signIn" | "signUp" | "resetRequest" | "resetVerify" | null;
 export type ModalType = "signIn" | "signUp" | null;
 
 export type AuthModalContextType = {
@@ -6,3 +9,9 @@ export type AuthModalContextType = {
     closeModal: () => void;
 }
 
+
+export type AuthContextType = {
+    user: UserDataResponse | null;
+    setUser: (user: UserDataResponse | null) => void;
+    loading: boolean;
+};

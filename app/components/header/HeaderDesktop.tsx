@@ -1,5 +1,23 @@
 'use client';
 
+import { useAuth } from "@/app/context/auth/AuthContext";
+import { useAuthModal } from "@/app/context/auth/AuthModalContext";
+import useLogout from "@/app/hooks/auth/useLogout";
+import useNavbar from "@/app/hooks/navbar/useNavbar";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+
+export default function HeaderDesktop() {
+    const router = useRouter();
+    const { user, setUser } = useAuth();
+    const { logout } = useLogout();
+    const [isOpenDropdown, setIsOpenDropdown] = useState(false);
+
+    const wrapperRef = useRef<HTMLDivElement>(null);
+
+
 import { useAuthModal } from "@/app/context/auth/AuthModalContext";
 import useNavbar from "@/app/hooks/navbar/useNavbar";
 import Image from "next/image";
@@ -20,6 +38,7 @@ export default function HeaderDesktop() {
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
             if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+                setIsOpenDropdown(false);
                 setIsOpenJoin(false);
             }
         };
@@ -32,15 +51,24 @@ export default function HeaderDesktop() {
     }, []);
 
 
-    return <header className="hidden xl:flex justify-between items-center h-25 px-20">
+    const handleLogout = async() => {
+        const data = await logout();
 
-        <Link href={href}>
+        if(data) {
+            setUser(null);
+            router.push("/");
+        }
+    }
+
+
+    return <header className="max-w-360 mx-auto hidden lg:flex justify-between items-center h-25 lg:px-20 md:px-10 text-gray-300">
+
+        <Link href={user ? "/profile" : "/"}>
             <Image
-                src={"/images/unilink/logo.png"}
+                src={"/images/header/logo.png"}
                 alt="UniLink"
                 width={128.86}
                 height={48}
-                className=""
             />
         </Link>
 
@@ -75,6 +103,19 @@ export default function HeaderDesktop() {
 
             <div className="flex items-center justify-between gap-5 max-w-65 max-h-12">
                 <p className="cursor-pointer">EN</p>
+                <div
+                    ref={wrapperRef}
+                    className="relative flex flex-col items-center text-white "
+                >
+                    <button
+                        onClick={() => setIsOpenDropdown(prev => !prev)}
+                        className={` cursor-pointer transition-all duration-200 bg-(--primary) hover:bg-(--primary-hover) border-[0.8px] border-(--primary) px-6
+                                ${user ?
+                                "w-20 h-12 py-2.5 shadow-[0px_4px_4px_0px_#00000040] rounded-3xl" :
+                                "max-w-47.5 h-12 py-2.5 rounded-3xl shadow-[inset_0px_4px_4px_0px_#00000040] text-nowrap hover:border-[#A5B9D4] "} 
+                            ${isOpenDropdown ? "bg-(--primary-hover) border-[#A5B9D4]" : "bg-(--primary)"} `}
+                    >
+                        {user ? <Image
                 {isLoggedIn ?
                     <button className="w-20 h-12 py-2.5 px-6 bg-(--primary) shadow-[0px_4px_4px_0px_#00000040] border-[0.8px] border-(--primary) rounded-3xl cursor-pointer">
                         <Image
@@ -82,6 +123,28 @@ export default function HeaderDesktop() {
                             alt="Profile"
                             width={32}
                             height={32}
+                        /> : <p>Join the platform</p>}
+                    </button>
+                    {isOpenDropdown && <div className="absolute flex flex-col justify-center items-center mt-10 gap-2.5 min-w-40.75 h-30 top-6 px-4 rounded-[25px] bg-[#FFFFFF08] backdrop-blur-[48px] shadow-[inset_0px_0px_68px_0px_#FFFFFF0D,inset_0px_4px_4px_0px_#FFFFFF26] ">
+                        <button
+                            onClick={() => {
+                                setIsOpenDropdown(false);
+                                openModal("signIn");
+                            }}
+                            className="text-nowrap bg-(--primary) hover:bg-(--primary-hover) rounded-full py-2 px-3 w-full cursor-pointer shadow-[inset_0px_4px_4px_0px_#00000040] transition-all duration-200 ">
+                            {user ? <p> business account </p> : <p>Sign In</p>}
+                        </button>
+                        <button
+                            onClick={() => {
+                                setIsOpenDropdown(false);
+                                user ? handleLogout() : openModal("signUp");
+                            }}
+                            className="text-nowrap bg-(--primary) hover:bg-(--primary-hover) rounded-full py-2 px-3 w-full cursor-pointer shadow-[inset_0px_4px_4px_0px_#00000040] transition-all duration-200 "
+                        >
+                            {user ? <p>Log out</p> : <p>Sign Up</p>}
+                        </button>
+                    </div>}
+                </div>
                         />
                     </button> :
                     <div

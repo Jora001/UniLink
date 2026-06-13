@@ -1,12 +1,19 @@
+'use client';
+
 import Link from "next/link";
 import { useAuthModal } from "../../context/auth/AuthModalContext";
 import { FormEvent, useState } from "react";
 import { UserData } from "../../types/auth";
 import useSignUp from "../../hooks/auth/useSignUp";
+import useGoogleAuth from "@/app/hooks/auth/useGoogleAuth";
 
 
 export default function SignUp() {
     const { closeModal, openModal } = useAuthModal();
+    const { signUp, error } = useSignUp();
+    const { googleAuth } = useGoogleAuth();
+
+    const [havingError, setHavingError] = useState<boolean>(false);
     const { signUp } = useSignUp();
 
     const [formData, setFormData] = useState<UserData>(
@@ -24,6 +31,7 @@ export default function SignUp() {
     const [passwordType, setPasswordType] = useState<"text" | "password">("password");
 
 
+    const handleSubmit = async (e: FormEvent) => {
     const handleSumbit = async (e: FormEvent) => {
         e.preventDefault();
 
@@ -41,6 +49,7 @@ export default function SignUp() {
         const updatedData: UserData = {
             ...cleaned,
             ...formData,
+            nickname: `user${uniqueID}`
             name: `User`,
             surname: `User`,
             nickname: `user${uniqueID}`,
@@ -49,6 +58,13 @@ export default function SignUp() {
 
         const user = await signUp(updatedData);
 
+        if (!user) {
+            setHavingError(true);
+            return;
+        }
+
+        closeModal();
+        openModal("signIn");
         if (user) {
             closeModal();
             openModal("signIn");
@@ -61,6 +77,7 @@ export default function SignUp() {
     }
 
 
+    return <main className="SignUp h-full text-(--text) w-100 md:w-120 lg:w-152.75 rounded-3xl flex flex-col justify-center items-center gap-6 py-7 bg-white/5 backdrop-blur-sm shadow-lg border">
     return <main className="SignUp h-full text-(--text) w-100 md:w-120 lg:w-152.75 rounded-3xl flex flex-col justify-center items-center gap-10 py-7 bg-white/5 backdrop-blur-sm shadow-lg border">
 
         {/* Close */}
@@ -76,6 +93,7 @@ export default function SignUp() {
         <h2 className="font-semibold text-[32px] leading-[130%] text-center align-middle">Sign Up</h2>
 
         <form
+            onSubmit={handleSubmit}
             onSubmit={handleSumbit}
             className="flex flex-col items-center gap-3.5"
         >
@@ -85,6 +103,10 @@ export default function SignUp() {
                 <input
                     type="email"
                     placeholder="Email"
+                    onChange={(e) => {
+                        setFormData(prev => ({ ...prev, email: e.target.value }));
+                        setHavingError(false);
+                    }}
                     onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                     value={formData.email}
                     className="w-full h-full p-4.5 border rounded-[10px] font-normal text-[13px] leading-[130%] align-middle outline-none focus:ring"
@@ -94,6 +116,38 @@ export default function SignUp() {
                     <path d="M7 9L12 12.5L17 9" stroke="white" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round" />
                     <path d="M2 17V7C2 5.89543 2.89543 5 4 5H20C21.1046 5 22 5.89543 22 7V17C22 18.1046 21.1046 19 20 19H4C2.89543 19 2 18.1046 2 17Z" stroke="white" />
                 </svg>
+            </div>
+
+
+            <div className="flex gap-4 w-80 md:w-100 lg:w-119">
+
+                {/* Name */}
+                <div className="relative flex items-center w-1/2 h-12">
+                    <input
+                        type="text"
+                        placeholder="Name"
+                        onChange={(e) => {
+                            setFormData(prev => ({ ...prev, name: e.target.value }));
+                            setHavingError(false);
+                        }}
+                        value={formData.name}
+                        className="w-full h-full p-4.5 border rounded-[10px] font-normal text-[13px] leading-[130%] outline-none focus:ring"
+                    />
+                </div>
+
+                {/* Surename */}
+                <div className="relative flex items-center w-1/2 h-12">
+                    <input
+                        type="text"
+                        placeholder="Surname"
+                        onChange={(e) => {
+                            setFormData(prev => ({ ...prev, surname: e.target.value }));
+                            setHavingError(false);
+                        }}
+                        value={formData.surname}
+                        className="w-full h-full p-4.5 border rounded-[10px] font-normal text-[13px] leading-[130%] outline-none focus:ring"
+                    />
+                </div>
             </div>
 
             {/* Name */}
@@ -133,6 +187,35 @@ export default function SignUp() {
                 </svg>
             </div>
 
+
+            <div className="flex gap-4 w-80 md:w-100 lg:w-119">
+
+                {/* Age */}
+                <div className="relative flex items-center w-1/2 h-12">
+                    <input
+                        type="text"
+                        placeholder="Age"
+                        onChange={(e) => setFormData(prev => ({ ...prev, age: Number(e.target.value) }))}
+                        value={formData.age || ""}
+                        className="w-full h-full p-4.5 border rounded-[10px] font-normal text-[13px] leading-[130%] outline-none focus:ring"
+                    />
+                </div>
+
+                {/* Gender */}
+                <div className="relative flex items-center w-1/2 h-12">
+                    <select
+                        value={formData.gender}
+                        onChange={(e) => {
+                            setFormData(prev => ({ ...prev, gender: e.target.value as "MALE" | "FEMALE" }));
+                            setHavingError(false);
+                        }}
+                        className="w-full h-full px-4.5 border rounded-[10px] font-normal text-[13px] outline-none focus:ring bg-transparent"
+                    >
+                        <option value="MALE" className="text-black">MALE</option>
+                        <option value="FEMALE" className="text-black">FEMALE</option>
+                    </select>
+                </div>
+            </div>
             {/* Age */}
             {/* <div className="relative flex items-center w-80 md:w-100 lg:w-119 h-12">
                 <input
@@ -161,6 +244,14 @@ export default function SignUp() {
                 <input
                     type={passwordType}
                     placeholder="Password"
+                    onChange={(e) => {
+                        setFormData(prev => ({ ...prev, password: e.target.value }));
+                        setHavingError(false);
+                    }}
+                    value={formData.password}
+                    className="w-full h-full p-4.5 border rounded-[10px] font-normal text-[13px] leading-[130%] align-middle outline-none focus:ring "
+                />
+                <svg 
                     onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
                     value={formData.password}
                     className="w-full h-full p-4.5 border rounded-[10px] font-normal text-[13px] leading-[130%] align-middle outline-none focus:ring "
@@ -176,6 +267,15 @@ export default function SignUp() {
                     <path d="M3 8C6.6 16 17.4 16 21 8" stroke="white" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
             </div>
+
+            {/* Error */}
+            {havingError && <p className="w-80 md:w-100 lg:w-119 text-red-500 text-sm text-left">
+                {error}
+            </p>}
+
+            <button
+                type="submit"
+                className="w-full h-14 rounded-[10px] bg-linear-to-r from-[#1170FF] to-[#0A4399] font-['Arial'] font-black text-[18px] md:text-[20px] leading-5 text-center align-middle mt-5 cursor-pointer">
 
             <button
                 type="submit"
@@ -196,6 +296,10 @@ export default function SignUp() {
         </div>
 
         {/* Sing Up With */}
+        <button
+            onClick={googleAuth}
+            className="w-80 md:w-100 lg:w-119 flex items-center gap-3.75 border rounded-[10px] py-5.5 px-7.5 cursor-pointer">
+
         <div className="w-80 md:w-100 lg:w-119 flex items-center gap-3.75 border rounded-[10px] py-5.5 px-7.5">
             <svg width="25" height="26" viewBox="0 0 25 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M24.543 12.8002C24.543 11.7707 24.4594 11.0194 24.2786 10.2402H12.522V14.8872H19.4229C19.2838 16.042 18.5325 17.7812 16.8629 18.9498L16.8395 19.1054L20.5567 21.9851L20.8142 22.0108C23.1794 19.8264 24.543 16.6124 24.543 12.8002Z" fill="#4285F4" />
@@ -204,6 +308,10 @@ export default function SignUp() {
                 <path d="M12.5222 4.84176C14.8735 4.84176 16.4596 5.85742 17.3639 6.70619L20.8979 3.25569C18.7275 1.23828 15.903 0 12.5222 0C7.62469 0 3.39507 2.81045 1.33594 6.9009L5.38466 10.0453C6.40042 7.02616 9.21086 4.84176 12.5222 4.84176Z" fill="#EB4335" />
             </svg>
             <span className="font-normal text-[15px] leading-[130%] align-middle">Continue with Google</span>
+        </button>
+
+        {/* Sign In */}
+        <div>
         </div>
 
         {/* Sign In */}

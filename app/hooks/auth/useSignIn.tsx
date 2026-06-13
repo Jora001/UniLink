@@ -1,6 +1,12 @@
 'use client';
 
 import { useState } from "react";
+import { SignInData, UserData } from "@/app/types/auth";
+import { useAuth } from "@/app/context/auth/AuthContext";
+
+export default function useSignIn() {
+    const { setUser } = useAuth();
+
 import { SignInData } from "@/app/types/auth";
 
 export default function useSignIn() {
@@ -14,6 +20,10 @@ export default function useSignIn() {
         try {
             const res = await fetch("/api/auth/login", {
                 method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -24,6 +34,13 @@ export default function useSignIn() {
             const data = await res.json();
 
             if (!res.ok) {
+                const message = data?.message;
+
+                throw new Error(message || "Login failed");
+            }
+
+            setUser(data.user);
+
                 throw new Error(data?.message || "Login failed");
             }
 

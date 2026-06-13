@@ -15,5 +15,26 @@ export type SignInData = {
 }
 
 export type UserDataResponse = {
+    "id": number,
+    "name": string,
+    "surname": string,
+    "email": string,
+    "password": string,
+    "nickname": string,
+    "age": number,
+    "role": string,
+    "gender": string
+    "isBlocked": boolean
+}
+
+export type ResetPswRequest = {
+    "email": string
+}
+
+export type ResetPswVerify = {
+    "email": string,
+    "code": string,
+    "password": string
+}
     "user": UserData;
 }

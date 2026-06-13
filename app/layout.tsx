@@ -6,6 +6,7 @@ import Header from "./components/header";
 import { AuthModalProvider } from "./context/auth/AuthModalContext";
 import AuthModal from "./context/auth/AuthModal";
 import Footer from "./components/footer";
+import { AuthProvider } from "./context/auth/AuthContext";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -37,6 +38,17 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <body className={`min-h-screen flex flex-col font-normal ${poppins.className}`}>
+        <AuthProvider>
+          <AuthModalProvider>
+            <Header />
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
+            <AuthModal />
+          </AuthModalProvider>
+        </AuthProvider>
       <body className={`min-h-full flex flex-col font-normal ${poppins.className}`}>
           <AuthModalProvider>
             <Header />

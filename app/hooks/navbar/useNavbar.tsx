@@ -2,6 +2,10 @@
 
 import { NavItem } from "@/app/types/navbar";
 import { useEffect, useState } from "react";
+
+export default function useNavbar() {
+  const [navItems, setNavItems] = useState<NavItem[]>([]);
+
 import { useEvents } from "../event/useEvents";
 import { useProjects } from "../project/useProject";
 import { useCourses } from "../course/useCourses";
@@ -35,11 +39,13 @@ export default function useNavbar() {
       },
       {
         name: "About Us",
+        href: "/about",
         href: "",
       },
     ];
 
     setNavItems(items);
+  }, []);
   }, [events]);
 
   return {
