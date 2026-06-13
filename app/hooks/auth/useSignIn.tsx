@@ -7,6 +7,9 @@ import { useAuth } from "@/app/context/auth/AuthContext";
 export default function useSignIn() {
     const { setUser } = useAuth();
 
+import { SignInData } from "@/app/types/auth";
+
+export default function useSignIn() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -21,6 +24,10 @@ export default function useSignIn() {
                 headers: {
                     "Content-Type": "application/json",
                 },
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                // credentials: "include", 
                 body: JSON.stringify(userData),
             });
 
@@ -33,6 +40,10 @@ export default function useSignIn() {
             }
 
             setUser(data.user);
+
+                throw new Error(data?.message || "Login failed");
+            }
+
             return data.user;
 
         } catch (err: any) {

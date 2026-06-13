@@ -12,3 +12,9 @@ export type Course = {
     "updatedAt": string
 };
 
+
+export type CoursePagination = {
+    "total": number,
+    "page": number,
+    "totalPages": number
+};

@@ -30,3 +30,4 @@ export type AddEventType = {
     "description": string,
     "image": string
 }
+};

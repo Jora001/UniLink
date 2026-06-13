@@ -1,5 +1,6 @@
 'use client';
 
+import Link from "next/link";
 import { useAuthModal } from "../../context/auth/AuthModalContext";
 import { FormEvent, useState } from "react";
 import { UserData } from "../../types/auth";
@@ -13,6 +14,7 @@ export default function SignUp() {
     const { googleAuth } = useGoogleAuth();
 
     const [havingError, setHavingError] = useState<boolean>(false);
+    const { signUp } = useSignUp();
 
     const [formData, setFormData] = useState<UserData>(
         {
@@ -30,6 +32,7 @@ export default function SignUp() {
 
 
     const handleSubmit = async (e: FormEvent) => {
+    const handleSumbit = async (e: FormEvent) => {
         e.preventDefault();
 
         const cleaned = Object.fromEntries(
@@ -47,6 +50,10 @@ export default function SignUp() {
             ...cleaned,
             ...formData,
             nickname: `user${uniqueID}`
+            name: `User`,
+            surname: `User`,
+            nickname: `user${uniqueID}`,
+            age: 18
         };
 
         const user = await signUp(updatedData);
@@ -58,6 +65,10 @@ export default function SignUp() {
 
         closeModal();
         openModal("signIn");
+        if (user) {
+            closeModal();
+            openModal("signIn");
+        }
     };
 
 
@@ -67,6 +78,7 @@ export default function SignUp() {
 
 
     return <main className="SignUp h-full text-(--text) w-100 md:w-120 lg:w-152.75 rounded-3xl flex flex-col justify-center items-center gap-6 py-7 bg-white/5 backdrop-blur-sm shadow-lg border">
+    return <main className="SignUp h-full text-(--text) w-100 md:w-120 lg:w-152.75 rounded-3xl flex flex-col justify-center items-center gap-10 py-7 bg-white/5 backdrop-blur-sm shadow-lg border">
 
         {/* Close */}
         <button
@@ -82,6 +94,7 @@ export default function SignUp() {
 
         <form
             onSubmit={handleSubmit}
+            onSubmit={handleSumbit}
             className="flex flex-col items-center gap-3.5"
         >
 
@@ -94,6 +107,7 @@ export default function SignUp() {
                         setFormData(prev => ({ ...prev, email: e.target.value }));
                         setHavingError(false);
                     }}
+                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                     value={formData.email}
                     className="w-full h-full p-4.5 border rounded-[10px] font-normal text-[13px] leading-[130%] align-middle outline-none focus:ring"
                 />
@@ -135,6 +149,28 @@ export default function SignUp() {
                     />
                 </div>
             </div>
+
+            {/* Name */}
+            {/* <div className="relative flex items-center w-80 md:w-100 lg:w-119 h-12">
+                <input
+                    type="text"
+                    placeholder="Name"
+                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                    value={formData.name}
+                    className="w-full h-full p-4.5 border rounded-[10px] font-normal text-[13px] leading-[130%] outline-none focus:ring"
+                />
+            </div> */}
+
+            {/* Surename */}
+            {/* <div className="relative flex items-center w-80 md:w-100 lg:w-119 h-12">
+                <input
+                    type="text"
+                    placeholder="Surname"
+                    onChange={(e) => setFormData(prev => ({ ...prev, surname: e.target.value }))}
+                    value={formData.surname}
+                    className="w-full h-full p-4.5 border rounded-[10px] font-normal text-[13px] leading-[130%] outline-none focus:ring"
+                />
+            </div> */}
 
             {/* Phone */}
             <div className="relative flex items-center w-80 md:w-100 lg:w-119 h-12">
@@ -180,6 +216,28 @@ export default function SignUp() {
                     </select>
                 </div>
             </div>
+            {/* Age */}
+            {/* <div className="relative flex items-center w-80 md:w-100 lg:w-119 h-12">
+                <input
+                    type="number"
+                    placeholder="Age"
+                    onChange={(e) => setFormData(prev => ({ ...prev, age: Number(e.target.value) }))}
+                    value={formData.age}
+                    className="w-full h-full p-4.5 border rounded-[10px] font-normal text-[13px] leading-[130%] outline-none focus:ring"
+                />
+            </div> */}
+
+            {/* Gender */}
+            {/* <div className="relative flex items-center w-80 md:w-100 lg:w-119 h-12">
+                <select
+                    value={formData.gender}
+                    onChange={(e) => setFormData(prev => ({ ...prev, gender: e.target.value as "MALE" | "FEMALE" }))}
+                    className="w-full h-full p-4.5 border rounded-[10px] font-normal text-[13px] leading-[130%] outline-none focus:ring bg-transparent"
+                >
+                    <option value="MALE">Male</option>
+                    <option value="FEMALE">Female</option>
+                </select>
+            </div> */}
 
             {/* Password */}
             <div className="relative flex items-center w-80 md:w-100 lg:w-119 h-12">
@@ -194,6 +252,11 @@ export default function SignUp() {
                     className="w-full h-full p-4.5 border rounded-[10px] font-normal text-[13px] leading-[130%] align-middle outline-none focus:ring "
                 />
                 <svg 
+                    onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                    value={formData.password}
+                    className="w-full h-full p-4.5 border rounded-[10px] font-normal text-[13px] leading-[130%] align-middle outline-none focus:ring "
+                />
+                <svg
                     onClick={togglePassword}
                     className="absolute right-0 mr-4.5 cursor-pointer"
                     width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
@@ -213,6 +276,10 @@ export default function SignUp() {
             <button
                 type="submit"
                 className="w-full h-14 rounded-[10px] bg-linear-to-r from-[#1170FF] to-[#0A4399] font-['Arial'] font-black text-[18px] md:text-[20px] leading-5 text-center align-middle mt-5 cursor-pointer">
+
+            <button
+                type="submit"
+                className="w-full h-14 rounded-[10px] bg-linear-to-r from-[#1170FF] to-[#0A4399] font-['Arial'] font-black text-[18px] md:text-[20px] leading-5 text-center align-middle mt-7 cursor-pointer">
                 Sign Up
             </button>
         </form>
@@ -232,6 +299,8 @@ export default function SignUp() {
         <button
             onClick={googleAuth}
             className="w-80 md:w-100 lg:w-119 flex items-center gap-3.75 border rounded-[10px] py-5.5 px-7.5 cursor-pointer">
+
+        <div className="w-80 md:w-100 lg:w-119 flex items-center gap-3.75 border rounded-[10px] py-5.5 px-7.5">
             <svg width="25" height="26" viewBox="0 0 25 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M24.543 12.8002C24.543 11.7707 24.4594 11.0194 24.2786 10.2402H12.522V14.8872H19.4229C19.2838 16.042 18.5325 17.7812 16.8629 18.9498L16.8395 19.1054L20.5567 21.9851L20.8142 22.0108C23.1794 19.8264 24.543 16.6124 24.543 12.8002Z" fill="#4285F4" />
                 <path d="M12.5222 25.0434C15.903 25.0434 18.7413 23.9303 20.8144 22.0103L16.8631 18.9493C15.8057 19.6867 14.3865 20.2015 12.5222 20.2015C9.21086 20.2015 6.40042 18.0172 5.39857 14.998L5.25172 15.0105L1.38649 18.0019L1.33594 18.1424C3.39507 22.2328 7.62469 25.0434 12.5222 25.0434Z" fill="#34A853" />
@@ -243,6 +312,10 @@ export default function SignUp() {
 
         {/* Sign In */}
         <div>
+        </div>
+
+        {/* Sign In */}
+        <div className="">
             <span className="font-normal text-[14px] leading-[130%] align-middle" >Already have an account? </span>
             <button
                 onClick={() => { closeModal(), openModal("signIn") }}

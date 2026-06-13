@@ -11,6 +11,7 @@ export default function useSignUp() {
     const signUp = async (userData: UserData) => {
         setLoading(true);
         setError(null);
+        setError(null); 
 
         try {
             const res = await fetch("/api/auth/register", {
@@ -18,6 +19,7 @@ export default function useSignUp() {
                 headers: {
                     "Content-Type": "application/json",
                 },
+                credentials: "include",
                 body: JSON.stringify(userData),
             });
 

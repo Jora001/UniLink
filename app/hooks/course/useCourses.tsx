@@ -62,6 +62,13 @@ export function useCourses() {
 
       setCourses(data);
       return data;
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text);
+      }
+
+      const data: Course[] = await res.json();
+      setCourses(data);
 
     } catch (e: any) {
       setError(e.message);

@@ -7,6 +7,11 @@ export default function Footer() {
              
             {/* Top */}
             <div className="flex flex-col lg:flex-row justify-between items-start gap-20">
+    return (
+        <main className="bg-[#0097FE] w-full h-full px-4 lg:px-20 py-10 text-white flex flex-col justify-between">
+
+            {/* Top */}
+            <div className="flex flex-col lg:flex-row justify-between items-start gap-25">
 
                 {/* Left */}
                 <div className="flex flex-col w-1/2">
@@ -16,6 +21,8 @@ export default function Footer() {
                         width={211}
                         height={90}
                         className="my-21.25 "
+                        height={100}
+                        className="my-21.25"
                     />
 
 
@@ -109,4 +116,7 @@ export default function Footer() {
             </div>
         </div>
     </footer>
+
+        </main>
+    );
 }

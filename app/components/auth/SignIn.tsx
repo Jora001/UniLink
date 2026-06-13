@@ -1,5 +1,6 @@
 'use client';
 
+import Link from "next/link";
 import { useAuthModal } from "../../context/auth/AuthModalContext";
 import { FormEvent, useState } from "react";
 import { SignInData } from "../../types/auth";
@@ -14,6 +15,7 @@ export default function SignIn() {
     const { googleAuth } = useGoogleAuth();
     const router = useRouter();
 
+
     const [formData, setFormData] = useState<SignInData>(
         {
             "email": "",
@@ -24,6 +26,7 @@ export default function SignIn() {
 
 
     const handleSubmit = async (e: FormEvent) => {
+    const handleSumbit = async (e: FormEvent) => {
         e.preventDefault();
 
         const cleaned = Object.fromEntries(
@@ -35,11 +38,14 @@ export default function SignIn() {
 
         if (!cleaned.email || !cleaned.password) return;
 
+        if(!cleaned.email || !cleaned.password) return;
+
         const user = await signIn(cleaned);
 
         if (user) {
             closeModal();
             router.push("/profile");
+
         }
     };
 
@@ -65,6 +71,7 @@ export default function SignIn() {
 
         <form
             onSubmit={handleSubmit}
+            onSubmit={handleSumbit}
             className="flex flex-col items-center gap-3.5"
         >
 
@@ -86,7 +93,7 @@ export default function SignIn() {
                 </svg>
             </div>
 
- 
+
             {/* Password */}
             <div className="relative flex items-center w-80 md:w-100 lg:w-119 h-12">
                 <input
@@ -118,6 +125,7 @@ export default function SignIn() {
                 > Reset </button>
             </div>
 
+
             <button
                 type="submit"
                 className="w-full h-14 rounded-[10px] bg-linear-to-r from-[#1170FF] to-[#0A4399] font-['Arial'] font-black text-[18px] md:text-[20px] leading-5 text-center align-middle mt-7 cursor-pointer">
@@ -140,6 +148,7 @@ export default function SignIn() {
         <button
             onClick={googleAuth}
             className="w-80 md:w-100 lg:w-119 flex items-center gap-3.75 border rounded-[10px] py-5.5 px-7.5 cursor-pointer">
+        <div className="w-80 md:w-100 lg:w-119 flex items-center gap-3.75 border rounded-[10px] py-5.5 px-7.5">
             <svg width="25" height="26" viewBox="0 0 25 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M24.543 12.8002C24.543 11.7707 24.4594 11.0194 24.2786 10.2402H12.522V14.8872H19.4229C19.2838 16.042 18.5325 17.7812 16.8629 18.9498L16.8395 19.1054L20.5567 21.9851L20.8142 22.0108C23.1794 19.8264 24.543 16.6124 24.543 12.8002Z" fill="#4285F4" />
                 <path d="M12.5222 25.0434C15.903 25.0434 18.7413 23.9303 20.8144 22.0103L16.8631 18.9493C15.8057 19.6867 14.3865 20.2015 12.5222 20.2015C9.21086 20.2015 6.40042 18.0172 5.39857 14.998L5.25172 15.0105L1.38649 18.0019L1.33594 18.1424C3.39507 22.2328 7.62469 25.0434 12.5222 25.0434Z" fill="#34A853" />
@@ -151,6 +160,10 @@ export default function SignIn() {
 
         {/* Sign Up */}
         <div>
+        </div>
+
+        {/* Sign Up */}
+        <div className="">
             <span className="font-normal text-[14px] leading-[130%] align-middle" >Already have an account? </span>
             <button
                 onClick={() => { closeModal(), openModal("signUp") }}

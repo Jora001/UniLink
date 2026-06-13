@@ -49,6 +49,14 @@ export default function RootLayout({
             <AuthModal />
           </AuthModalProvider>
         </AuthProvider>
+      <body className={`min-h-full flex flex-col font-normal ${poppins.className}`}>
+          <AuthModalProvider>
+            <Header />
+            {children}
+            <Footer />
+
+            <AuthModal />
+          </AuthModalProvider>
       </body>
     </html>
   );

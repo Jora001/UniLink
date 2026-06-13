@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { AddProjectType, Project } from "@/app/types/project";
+import { Project } from "@/app/types/project";
 
 export function useProjects() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -62,6 +63,13 @@ export function useProjects() {
 
       setProjects(data);
       return data;
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text);
+      }
+
+      const data: Project[] = await res.json();
+      setProjects(data);
 
     } catch (e: any) {
       setError(e.message);

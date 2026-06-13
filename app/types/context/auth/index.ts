@@ -1,6 +1,7 @@
 import { UserDataResponse } from "../../auth";
 
 export type ModalType = "signIn" | "signUp" | "resetRequest" | "resetVerify" | null;
+export type ModalType = "signIn" | "signUp" | null;
 
 export type AuthModalContextType = {
     modal: ModalType;

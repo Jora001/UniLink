@@ -1,6 +1,7 @@
 'use client';
 
 import { AddEventType, Event } from "@/app/types/event";
+import { Event } from "@/app/types/event";
 import { useCallback, useState } from "react";
 
 export function useEvents() {
@@ -62,6 +63,13 @@ export function useEvents() {
 
       setEvents(data);
       return data;
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text);
+      }
+
+      const data: Event[] = await res.json();
+      setEvents(data);
 
     } catch (e: any) {
       setError(e.message);
